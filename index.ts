@@ -1,18 +1,26 @@
-type Player = {
+export type Player = {
   name: string;
   age: number;
   elo: number;
 };
-const players: Player[] = [
-  { name: "Emanuel", age: 25, elo: 2000 },
+export const players: Player[] = [
+  { name: "Harry", age: 25, elo: 2000 },
   { name: "Jane", age: 20, elo: 2100 },
-  { name: "Charlie", age: 22, elo: 1900 },
-  { name: "Camille", age: 20, elo: 2000 },
-  { name: "john", age: 23, elo: 2200 },
-  { name: "Frank", age: 21, elo: 2100 },
+  { name: "Charlie", age: 20, elo: 1900 },
+  { name: "Camille", age: 20, elo: 3000 },
+  { name: "john", age: 25, elo: 2200 },
+  { name: "Frank", age: 31, elo: 2100 },
+  { name: "Erwan", age: 31, elo: 2100 },
 ];
 
-function groupByAge(players: Player[]): Map<number, Player[]> {
+export function groupByAge(players: Player[]): Map<number, Player[]> {
+  players.forEach((player, index) => {
+    if (!player || typeof player.age !== "number") {
+      throw new Error(
+        `Invalid player at index ${index}: ${JSON.stringify(player)}`
+      );
+    }
+  });
   const group = new Map<number, Player[]>();
   players.forEach((player) => {
     if (!group.has(player.age)) {
@@ -23,32 +31,28 @@ function groupByAge(players: Player[]): Map<number, Player[]> {
   return group;
 }
 
-function findChampions(players: Player[]): Player[] {
+export function findChampions(players: Player[]): Player[] {
   if (players.length <= 1) {
     return players;
   }
 
   const groupedByAge = groupByAge(players);
   const champions: Player[] = [];
-  let maxElo = -Infinity;
 
   Array.from(groupedByAge.keys())
-    .sort((a, b) => a - b) //tri les age par ordre décroissant
+    .sort((a, b) => a - b)
     .forEach((age) => {
       const group = groupedByAge.get(age);
       if (!group) return;
 
-      group.sort((a, b) => b.elo - a.elo);
-
-      group.forEach((player) => {
-        if (player.elo > maxElo) {
-          champions.push(player);
-          maxElo = player.elo;
-        }
-      });
+      const bestPlayer = group.reduce((best, player) =>
+        player.elo > best.elo ? player : best
+      );
+      if (bestPlayer.elo > 2500) {
+        champions.push(bestPlayer);
+      }
     });
-
-  return champions;
+    return champions;
 }
 
 const champions = findChampions(players);
