@@ -1,3 +1,5 @@
+import { log } from "console";
+
 export type Player = {
   name: string;
   age: number;
@@ -33,3 +35,13 @@ export class ChampionService {
     return playersWithBestElo.filter((player) => player.age === youngestAge);
   }
 }
+
+const players : Player[] = [
+  { name: 'Jane', age: 30, elo: 2500 },
+  { name: 'Erwan', age: 20, elo: 2800 },
+  { name: 'John', age: 40, elo: 2900 },
+  { name: 'Toto', age: 15, elo: 2900 }
+
+]
+const service = new ChampionService(players)
+console.log(service.findChampions())
